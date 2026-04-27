@@ -17,11 +17,10 @@ pipeline {
         stage('Deploy to App Server') {
             steps {
                 sh '''
-                ssh -o StrictHostKeyChecking=no ec2-user@$APP_SERVER << EOF
-                docker stop myapp || true
-                docker rm myapp || true
-                docker run -d -p 80:80 myapp
-                EOF
+                ssh -o StrictHostKeyChecking=no ec2-user@$APP_SERVER \
+                "docker stop $IMAGE_NAME || true && \
+                 docker rm $IMAGE_NAME || true && \
+                 docker run -d -p 80:80 --name $IMAGE_NAME $IMAGE_NAME"
                 '''
             }
         }

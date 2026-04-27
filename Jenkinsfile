@@ -17,9 +17,8 @@ pipeline {
         stage('Deploy to App Server') {
             steps {
                 sh '''
-                ssh -i /home/jenkins/.ssh/id_rsa \
+                ssh -i /var/lib/jenkins/.ssh/id_rsa \
                 -o StrictHostKeyChecking=no \
-                -o UserKnownHostsFile=/dev/null \
                 ec2-user@$APP_SERVER \
                 "docker stop $IMAGE_NAME || true && \
                  docker rm $IMAGE_NAME || true && \

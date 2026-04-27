@@ -8,22 +8,20 @@ pipeline {
 
     stages {
 
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $IMAGE_NAME .'
-            }
-        }
-
         stage('Deploy to App Server') {
             steps {
                 sh '''
                 ssh -i /var/lib/jenkins/.ssh/id_rsa \
                 -o StrictHostKeyChecking=no \
-                -o UserKnownHostsFile=/dev/null \
                 ec2-user@$APP_SERVER \
-                "docker stop $IMAGE_NAME || true && \
-                 docker rm $IMAGE_NAME || true && \
-                 docker run -d -p 80:80 --name $IMAGE_NAME $IMAGE_NAME"
+                "cd /home/ec2-user && \
+                 rm -rf app && \
+                 git clone https://github.com/Aman6125/devops-app.git app && \
+                 cd app && \
+                 docker build -t myapp . && \
+                 docker stop myapp || true && \
+                 docker rm myapp || true && \
+                 docker run -d -p 80:80 --name myapp myapp"
                 '''
             }
         }
